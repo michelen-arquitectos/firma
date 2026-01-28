@@ -762,27 +762,24 @@
         }
       }
 
-      // Fallback: try clipboard.writeText
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        try {
-          await navigator.clipboard.writeText(html);
-          showCopiedFeedback();
-          return;
-        } catch (e) {
-          console.warn('writeText failed, trying fallback:', e);
-        }
-      }
-
-      // Final fallback: use execCommand (works on HTTP)
+      // Fallback: copy rendered HTML using selection (works on HTTP)
       try {
-        const textarea = document.createElement('textarea');
-        textarea.value = html;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        container.style.position = 'fixed';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        document.body.appendChild(container);
+
+        const range = document.createRange();
+        range.selectNodeContents(container);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
         document.execCommand('copy');
-        document.body.removeChild(textarea);
+        selection.removeAllRanges();
+        document.body.removeChild(container);
         showCopiedFeedback();
       } catch (e) {
         console.error('All copy methods failed:', e);
