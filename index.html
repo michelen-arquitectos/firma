@@ -703,7 +703,7 @@
       if (twitter) contactParts.push('@' + twitter.replace('@', ''));
       const contactLine = contactParts.join(' • ');
 
-      let html = `<table cellpadding="0" cellspacing="0" border="0" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.4;">
+      let html = `<table cellpadding="0" cellspacing="0" border="0" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.4; background: transparent;">
   <tr>
     <td style="font-weight: 600; color: #1a1a1a; font-size: 15px;">${getValue('name')}</td>
   </tr>
@@ -769,6 +769,7 @@
         container.style.position = 'fixed';
         container.style.left = '-9999px';
         container.style.top = '0';
+        container.style.background = 'white';
         document.body.appendChild(container);
 
         const range = document.createRange();
