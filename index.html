@@ -745,21 +745,48 @@
 
     async function copySignature() {
       const html = generateSignatureHTML();
-      try {
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            'text/html': new Blob([html], { type: 'text/html' }),
-            'text/plain': new Blob([html], { type: 'text/plain' })
-          })
-        ]);
-        showCopiedFeedback();
-      } catch (e) {
+
+      // Try modern Clipboard API first (requires HTTPS)
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': new Blob([html], { type: 'text/html' }),
+              'text/plain': new Blob([html], { type: 'text/plain' })
+            })
+          ]);
+          showCopiedFeedback();
+          return;
+        } catch (e) {
+          console.warn('ClipboardItem failed, trying fallback:', e);
+        }
+      }
+
+      // Fallback: try clipboard.writeText
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
           await navigator.clipboard.writeText(html);
           showCopiedFeedback();
-        } catch (e2) {
-          console.error('Failed to copy:', e2);
+          return;
+        } catch (e) {
+          console.warn('writeText failed, trying fallback:', e);
         }
+      }
+
+      // Final fallback: use execCommand (works on HTTP)
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = html;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopiedFeedback();
+      } catch (e) {
+        console.error('All copy methods failed:', e);
+        alert('No se pudo copiar. Por favor selecciona y copia manualmente.');
       }
     }
 
