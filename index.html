@@ -390,7 +390,7 @@
 <body>
   <div class="container" id="app">
     <div class="header">
-      <h1>Generador de Firma de Michellen</h1>
+      <h1>Generador de Firma de Michelen Arquitectos</h1>
       <p>Crea una firma profesional en segundos</p>
     </div>
 
@@ -578,7 +578,10 @@
   </div>
 
   <script>
-    // Default values
+    // Base URL for the hosted site (used for logo URLs in copied signatures)
+    const BASE_URL = 'https://firma.michelenarquitectos.com/';
+
+    // Default logo filenames
     const DEFAULT_LOGO_LIGHT = 'Michelen Arquitectos Logo.png';
     const DEFAULT_LOGO_DARK = 'Michelen Arquitectos Logo Dark.png';
 
@@ -691,7 +694,9 @@
       const company = getValue('company');
       const website = getValue('website');
       const websiteHref = website.startsWith('http') ? website : 'https://' + website;
-      const currentLogo = state.darkPreview ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT;
+      const logoFilename = state.darkPreview ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT;
+      // Use full URL for the logo so it works when pasted in email clients
+      const currentLogo = BASE_URL + encodeURIComponent(logoFilename);
 
       const contactParts = [];
       if (phone) contactParts.push('<a href="tel:' + phone.replace(/\s/g, '') + '" style="color: #6b6b6b; text-decoration: none;">' + phone + '</a>');
